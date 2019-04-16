@@ -60,7 +60,7 @@ def create_binned_col(df, col, bins, include_lowest=True):
 	as this is what sklearn decision tree requires.
 	'''
 	labels = list(range(len(bins)-1))
-	df[col] = pd.cut(df[col], bins, labels=labels, include_lowest=include_lowest)
+	df[col+'_binned'] = pd.cut(df[col], bins, labels=labels, include_lowest=include_lowest)
 	return df
 
 def create_binary_col(df, col, criteria_dict):
@@ -68,7 +68,7 @@ def create_binary_col(df, col, criteria_dict):
 	Maps values of a df column to 1 or 0 as outlined in the criteria_dict, taken
 	as an input to the function
 	'''
-	df[col] = df[col].map(criteria_dict)
+	df[col+'_binary'] = df[col].map(criteria_dict)
 	return df
 
 ###### BUILD CLASSIFIER ######
