@@ -1,8 +1,6 @@
 # ML-Homework-2
 Homework Assignment 2
 
-Pipeline file contains script and required packages to run
+Pipeline file contains script and required packages to run; Jupyter notebook includes output and analysis for running pipeline file on credit dataset.
 
-Jupyter notebook includes output and analysis for funning on credit dataset
-
-html file presents same info in html format
+HTMLs and pdfs are uploaded for easier reading of write-up!
