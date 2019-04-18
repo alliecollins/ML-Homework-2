@@ -18,13 +18,16 @@ def read_file(filename):
 
 ###### STEP: DISPLAY SUMMARY STATS #######
 
-def calc_summary_stats(filename):
+def calc_summary_stats(filename, cols_to_drop=None):
 	'''
 	Calculates mean, median, standard deviation, max and min values for all columns 
 	(note: this may be non-sensical for categorical variables)
 	'''
 	df = read_file(filename)
 	
+	if cols_to_drop:
+		df = df.drop(cols_to_drop, axis=1)
+
 	summary_df = pd.DataFrame(df.mean())
 	summary_df = summary_df.rename(columns={0:'mean'})
 	summary_df['std_dev'] = df.std()

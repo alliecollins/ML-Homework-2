@@ -13130,7 +13130,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I have provided docstrings in the pipeline.py file for the different functions created as per the assignment; here I implement them on the credit dataset and interpret results.</p>
+<p>I have provided docstrings in the pipeline.py file for the different functions created as per the assignment for different stages of the pipeline; here I implement them on the credit dataset and interpret results.</p>
 
 </div>
 </div>
@@ -13153,7 +13153,8 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>First, look at summary statistics. In the pipeline file, I have generated functions which produce a table with mean, std deviation, median, and max and min values across all columns (did not specify here a subset, since it was meant to be abstracted, but I recognize mean PersonID is meaningless).</p>
+<p>First, let's look at summary statistics. In the pipeline file, I have generated functions which produce a table with mean, std deviation, median, and max and min values across all columns; we will use the feature to remove certain columns to remove person ID, zipcodes, since those are not meaningful variables to check distribution on.</p>
+<p>From the below chart, we can see that mean income is somewhat higher than median, indicating skewed upwards (which we can see there is a very high max value, which could indicate an extremely high earner or someone who entered in their annual income for monthly). A few other observations -- revolving utilization has a high standard deviation relative to the mean; same with number of days past due.</p>
 
 </div>
 </div>
@@ -13163,7 +13164,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">calc_summary_stats</span><span class="p">(</span><span class="s1">&#39;credit-data.csv&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">calc_summary_stats</span><span class="p">(</span><span class="s1">&#39;credit-data.csv&#39;</span><span class="p">,[</span><span class="s1">&#39;PersonID&#39;</span><span class="p">,</span><span class="s1">&#39;zipcode&#39;</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -13208,14 +13209,6 @@ div#notebook {
   </thead>
   <tbody>
     <tr>
-      <th>PersonID</th>
-      <td>115800.154598</td>
-      <td>28112.723511</td>
-      <td>119901.500000</td>
-      <td>149999.0</td>
-      <td>22.0</td>
-    </tr>
-    <tr>
       <th>SeriousDlqin2yrs</th>
       <td>0.161400</td>
       <td>0.367904</td>
@@ -13238,14 +13231,6 @@ div#notebook {
       <td>51.000000</td>
       <td>109.0</td>
       <td>21.0</td>
-    </tr>
-    <tr>
-      <th>zipcode</th>
-      <td>60623.824166</td>
-      <td>11.984357</td>
-      <td>60625.000000</td>
-      <td>60644.0</td>
-      <td>60601.0</td>
     </tr>
     <tr>
       <th>NumberOfTime30-59DaysPastDueNotWorse</th>
@@ -13325,8 +13310,9 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I also created a function that produces a simple scatterplot of a given independent and dependent variable, so we can take a glance at correlation. Let's look at whether income appears correlated.</p>
-<p>We can see there is more spread in monthly income among those who did not have serious delinquency over the two years.</p>
+<p>I also created a function that produces a simple scatterplot of a given independent and dependent variable, so we can take a glance at correlation. Let's look at whether income appears correlated, and then whether number of times 90 days late.</p>
+<p>For income, we can see there is more spread in monthly income among those who did not have serious delinquency over the two years. We can also identify a potential outlier, which could be the maximum value above.</p>
+<p>For number of times 90 days late, we can see that there is a thicker band of dots continuing farther to the right for those who exhibited serious delinquency (e.g. were late more times) than for those who did not, which intuitively makes sense.</p>
 
 </div>
 </div>
@@ -13366,17 +13352,52 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">generate_summary_plot</span><span class="p">(</span><span class="s1">&#39;credit-data.csv&#39;</span><span class="p">,</span><span class="s1">&#39;SeriousDlqin2yrs&#39;</span><span class="p">,</span><span class="s1">&#39;NumberOfTimes90DaysLate&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's now do some data pre-processing before we go to creating the decision tree. First, let's use the function written to fill in any missing values.</p>
+<p>Let's now do some data pre-processing before we go to creating the decision tree. First, let's use the function written to fill in any missing values with the median, and get a pandas dataframe back.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">filled_data</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fill_missing</span><span class="p">(</span><span class="s1">&#39;credit-data.csv&#39;</span><span class="p">)</span>
@@ -13389,7 +13410,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">filled_data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -13405,7 +13426,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -13474,14 +13495,14 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now, let's use the function in pipeline to create a binned column where we break age up into 4 groups: 20-30 (young adult), 30-45 (adult), 45-65 (middle aged), 65-109 (elderly).</p>
+<p>Now, let's use the function in pipeline to create a binned column where we break age up into 4 groups: 20-30 (young adult), 30-45 (adult), 45-65 (middle aged), 65-109 (elderly). The binning function will return ints, since the decision tree requires numbers.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">filled_data</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">create_binned_col</span><span class="p">(</span><span class="n">filled_data</span><span class="p">,</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">109</span><span class="p">])</span>
@@ -13502,7 +13523,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Check the unique values in the column to create our mapping dictionary</span>
@@ -13519,7 +13540,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -13536,7 +13557,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Create the dictionary to map to binary 0,1</span>
@@ -13550,7 +13571,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">filled_data</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">create_binary_col</span><span class="p">(</span><span class="n">filled_data</span><span class="p">,</span> <span class="s1">&#39;NumberOfDependents&#39;</span><span class="p">,</span> <span class="n">dependents_dict</span><span class="p">)</span>
@@ -13567,7 +13588,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -13647,7 +13668,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">create_decision_tree</span><span class="p">(</span><span class="n">filled_data</span><span class="p">,</span> <span class="s1">&#39;SeriousDlqin2yrs&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">,[</span><span class="s1">&#39;RevolvingUtilizationOfUnsecuredLines&#39;</span><span class="p">,</span>
@@ -13664,7 +13685,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">graph</span><span class="p">,)</span> <span class="o">=</span> <span class="n">pydot</span><span class="o">.</span><span class="n">graph_from_dot_file</span><span class="p">(</span><span class="s1">&#39;tree.dot&#39;</span><span class="p">)</span>
@@ -13677,7 +13698,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">graph</span><span class="o">.</span><span class="n">write_png</span><span class="p">(</span><span class="s1">&#39;tree.png&#39;</span><span class="p">)</span>
@@ -13690,7 +13711,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">Image</span>
@@ -13707,7 +13728,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[13]:</div>
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -13727,7 +13748,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can see that the tree first split on number of times 90 days late. For those for whom this was true that it was &lt;.5, revolving utilization was the next most significant predictor, followed by the number of times 30-59 days past due. For simplicity I implemented a max depth of 4.</p>
+<p>We can see that the tree first split on number of times 90 days late. For those for whom this was true that it was &lt;.5, revolving utilization was the next most significant predictor, followed by the number of times 30-59 days past due. For simplicity I implemented a max depth of 4, but this is a parameter which can be changed (as is the minimum number of entries required to make a split).</p>
 <p>For those for whom they were later &gt;.5 time, the next most important criteria was different -- this time it was zip code. We can trace down the paths to classify individuals.</p>
 
 </div>
@@ -13736,17 +13757,18 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we can evaluate the file using the accuracy feature of sklearn, which is wrapped into a function in the pipeline file. Per below, we can see that the model has ~87% accuracy.</p>
+<p>Now we can evaluate the file using the accuracy feature of sklearn, which is wrapped into a function in the pipeline file. Per below, we can see that the model has ~87% accuracy, although as we have discussed in class, this may not be the best measure.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pipeline</span><span class="o">.</span><span class="n">evaluate_decision_tree</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">evaluate_decision_tree</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">accuracy</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="s1">&#39;%&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13759,15 +13781,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[14]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.8730251609128145</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>87.3 %
+</pre>
 </div>
-
 </div>
 
 </div>
